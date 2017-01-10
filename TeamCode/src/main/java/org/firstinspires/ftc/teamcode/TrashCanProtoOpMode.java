@@ -21,6 +21,5 @@ public class TrashCanProtoOpMode extends LinearOpMode
     {
         initializeMotors();
         waitForStart();
-
     }
 }
