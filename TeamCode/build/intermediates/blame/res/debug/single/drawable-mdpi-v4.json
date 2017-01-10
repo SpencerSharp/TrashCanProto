@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/spencersharp/Desktop/GitHub/ftc_app-master/TeamCode/build/intermediates/res/merged/debug/drawable-mdpi-v4/ic_launcher.png",
+        "source": "/Users/spencersharp/Desktop/GitHub/ftc_app-master/TeamCode/build/intermediates/exploded-aar/ftc_app-master/FtcRobotController/unspecified/res/drawable-mdpi-v4/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/spencersharp/Desktop/GitHub/TrashCanProto/TeamCode/build/intermediates/res/merged/debug/drawable-mdpi-v4/ic_launcher.png",
+        "source": "/Users/spencersharp/Desktop/GitHub/TrashCanProto/TeamCode/build/intermediates/exploded-aar/TrashCanProto/FtcRobotController/unspecified/res/drawable-mdpi-v4/ic_launcher.png"
+    }
+]
