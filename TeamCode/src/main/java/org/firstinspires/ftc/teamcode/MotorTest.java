@@ -6,13 +6,12 @@ package org.firstinspires.ftc.teamcode;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Motor Test", group="Autonomous")
 public class MotorTest extends TrashCanProtoOpMode
 {
-    public void runOpMode()
-    {
+    public void runOpMode() throws InterruptedException {
         super.runOpMode();
-        while(opModeIsActive())
-        {
+        while(opModeIsActive()) {
             motorL.setPower(1.0);
             motorR.setPower(-1.0);
+            telemetry.update();
             idle();
         }
     }
