@@ -75,7 +75,13 @@ public class TrashCanProtoOpMode extends LinearOpMode {
             value -= 360;
         return value;
     }
-    public void rotatePB(double pow, int deg) throws InterruptedException {
+
+    public void startMotors(double ri, double le) throws InterruptedException {
+        motorL.setPower(le);
+        motorR.setPower(ri);
+    }
+
+    public void rotatePID(double pow, int deg) throws InterruptedException {
 
         double power = pow;
         double angleTo = deg;
@@ -122,8 +128,8 @@ public class TrashCanProtoOpMode extends LinearOpMode {
         }
 
         stopMotors();
-        opMode.telemetry.addData("finished", "done");
-        opMode.telemetry.update();
+        telemetry.addData("finished", "done");
+        telemetry.update();
     }
 
     private void composeTelemetry() {
