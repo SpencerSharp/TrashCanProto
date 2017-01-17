@@ -7,6 +7,7 @@ import com.qualcomm.hardware.adafruit.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -28,6 +29,10 @@ public class TrashCanProtoOpMode extends LinearOpMode {
     public void initializeMotors() {
         motorL = hardwareMap.dcMotor.get("motorL");
         motorR = hardwareMap.dcMotor.get("motorR");
+        motorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorL.setMaxSpeed(250);
+        motorR.setMaxSpeed(250); //arbitrary
     }
 
     public void initializeSensors() {
@@ -53,7 +58,9 @@ public class TrashCanProtoOpMode extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         initializeMotors();
         initializeSensors();
-        waitForStart();
+        composeTelemetry();
+        while(!opModeIsActive())
+            telemetry.update();
     }
 
 
@@ -67,6 +74,56 @@ public class TrashCanProtoOpMode extends LinearOpMode {
         if(angles.firstAngle < -180)
             value -= 360;
         return value;
+    }
+    public void rotatePB(double pow, int deg) throws InterruptedException {
+
+        double power = pow;
+        double angleTo = deg;
+        double error;
+        double inte = 0;
+        double inteNoE = 0;
+        double der;
+
+        double currentAngle = getGyroYaw();
+        double previousError = angleTo - currentAngle;
+
+        telemetry.addData("Current Angle", currentAngle + "");
+        telemetry.addData("Angle To", angleTo + "");
+        telemetry.update();
+
+        resetStartTime();
+
+        currentAngle = 0;
+
+        while(Math.abs(currentAngle) < Math.abs(angleTo) - 2) {
+            currentAngle = getGyroYaw();
+            error = Math.abs(angleTo) - Math.abs(currentAngle);
+            telemetry.addData("error", error);
+            power = (pow * (error) * .003) + .1;                   //update p values
+            inte = ((getRuntime()) * error * .005);          //update inte value
+            inteNoE = ((getRuntime()) * .055);
+            der = (error - previousError) / getRuntime() * 0; //update der value
+
+            power = power + inteNoE + der;
+
+            if(angleTo > 0)
+                power *= -1;
+
+            Range.clip(power, -1, 1);
+            startMotors(-power, power);
+            telemetry.addData("PID", power);
+//            opMode.telemetry.addData("integral", inte);
+            telemetry.addData("integral without error", inteNoE);
+            telemetry.addData("angle", currentAngle + " " + angleTo);
+
+            telemetry.update();
+            previousError = error;
+            idle();
+        }
+
+        stopMotors();
+        opMode.telemetry.addData("finished", "done");
+        opMode.telemetry.update();
     }
 
     private void composeTelemetry() {
@@ -89,5 +146,4 @@ public class TrashCanProtoOpMode extends LinearOpMode {
                     }
                 });
     }
-
 }
