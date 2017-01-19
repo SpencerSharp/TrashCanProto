@@ -76,9 +76,13 @@ public class TrashCanProtoOpMode extends LinearOpMode {
         return value;
     }
 
-    public void startMotors(double ri, double le) throws InterruptedException {
+    public void startMotors(double le, double ri) throws InterruptedException {
         motorL.setPower(le);
         motorR.setPower(ri);
+    }
+
+    public void stopMotors() throws InterruptedException {
+        startMotors(0, 0);
     }
 
     public void rotatePID(double pow, int deg) throws InterruptedException {
@@ -105,7 +109,7 @@ public class TrashCanProtoOpMode extends LinearOpMode {
             currentAngle = getGyroYaw();
             error = Math.abs(angleTo) - Math.abs(currentAngle);
             telemetry.addData("error", error);
-            power = (pow * (error) * .003) + .1;                   //update p values
+            power = (pow * (error) * .001) + .1;                   //update p values
             inte = ((getRuntime()) * error * .005);          //update inte value
             inteNoE = ((getRuntime()) * .055);
             der = (error - previousError) / getRuntime() * 0; //update der value
@@ -130,6 +134,30 @@ public class TrashCanProtoOpMode extends LinearOpMode {
         stopMotors();
         telemetry.addData("finished", "done");
         telemetry.update();
+    }
+    public void moveForward(double pow, int inches) throws InterruptedException {
+        double startAngle = getGyroYaw();
+        double currentAngle;
+        double encoderTicks = ((Math.PI * 6) * (1440 * inches) / 6);
+        while(encoderAvg() < encoderTicks) {
+            currentAngle = getGyroYaw();
+            if(currentAngle > startAngle + 2) {
+                startMotors(pow * .75, pow);
+            }
+            else if(currentAngle < startAngle - 2) {
+                startMotors(pow, pow * .75);
+            }
+            else {
+                startMotors(pow, pow);
+            }
+            telemetry.update();
+        }
+        stopMotors();
+
+    }
+
+    public int encoderAvg() {
+        return (Math.abs(motorL.getCurrentPosition()) + Math.abs(motorR.getCurrentPosition())) / 2;
     }
 
     private void composeTelemetry() {
