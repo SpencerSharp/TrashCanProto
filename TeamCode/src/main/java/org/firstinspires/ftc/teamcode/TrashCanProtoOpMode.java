@@ -13,9 +13,7 @@ import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-/**
- * Created by spencersharp on 1/10/17.
- */
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="AutoTest", group="Autonomous")
 public class TrashCanProtoOpMode extends LinearOpMode {
     DcMotor motorL;
     DcMotor motorR;
@@ -29,10 +27,10 @@ public class TrashCanProtoOpMode extends LinearOpMode {
     public void initializeMotors() {
         motorL = hardwareMap.dcMotor.get("motorL");
         motorR = hardwareMap.dcMotor.get("motorR");
-        motorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorL.setMaxSpeed(250);
-        motorR.setMaxSpeed(250); //arbitrary
+        //motorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //motorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //motorL.setMaxSpeed(250);
+        //motorR.setMaxSpeed(250); //arbitrary
     }
 
     public void initializeSensors() {
@@ -55,12 +53,37 @@ public class TrashCanProtoOpMode extends LinearOpMode {
         gravity  = gyro.getGravity();
     }
 
+    double curTime;
+
+    public void initCurtime()
+    {
+        if(opModeIsActive())
+            curTime = ((double)System.nanoTime())/1000000000.0;
+    }
+
+    public double getCurTime()
+    {
+        return curTime;
+    }
+
+    public void pause(double t) throws InterruptedException {
+        initCurtime();
+
+        //hacked
+        double startTime = getCurTime();
+        while (opModeIsActive() && getCurTime() < startTime + t)
+        {
+            initCurtime();
+            idle();
+        }
+    }
+
     public void runOpMode() throws InterruptedException {
         initializeMotors();
-        initializeSensors();
+        //initializeSensors();
         composeTelemetry();
-        while(!opModeIsActive())
-            telemetry.update();
+        while(!opModeIsActive() && !isStopRequested())
+            telemetry.update();idle();
     }
 
 
@@ -164,20 +187,20 @@ public class TrashCanProtoOpMode extends LinearOpMode {
         telemetry.addLine()
                 .addData("L", new Func<String>() {
                     @Override public String value() {
-                        return "L: " + motorL.getCurrentPosition();
+                        return "L: " + motorL.getPower();
                     }
                 });
         telemetry.addLine()
                 .addData("R", new Func<String>() {
                     @Override public String value() {
-                        return "R: " + motorR.getCurrentPosition();
+                        return "R: " + motorR.getPower();
                     }
                 });
-        telemetry.addLine()
-                .addData("yaw", new Func<String>() {
-                    @Override public String value() {
-                        return "yaw: " + getGyroYaw();
-                    }
-                });
+        //telemetry.addLine()
+        //        .addData("yaw", new Func<String>() {
+        //            @Override public String value() {
+        //                return "yaw: " + getGyroYaw();
+        //            }
+        //        });
     }
 }

@@ -9,7 +9,7 @@ public class AutoTest extends TrashCanProtoOpMode
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
         moveForward(.5, 12);
-        rotatePID(.5, 90);
+        //rotatePID(.5, 90);
         moveForward(.5, 12);
         stopMotors();
     }

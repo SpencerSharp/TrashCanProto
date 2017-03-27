@@ -9,16 +9,17 @@ public class MotorRecorder extends TrashCanProtoOpMode
 {
     public boolean hasStepEnded()
     {
-
+        return true;
     }
 
     public void saveProcedureToFile(ArrayList<Step> procedure)
     {
-        
+
     }
 
     public void runOpMode()
     {
+        /*
         ArrayList<Step> procedure = new ArrayList<Step>();
         while(opModeIsActive())
         {
@@ -30,6 +31,6 @@ public class MotorRecorder extends TrashCanProtoOpMode
                 idle();
             }
         }
-        saveProcedureToFile(procedure);
+        saveProcedureToFile(procedure);*/
     }
 }
